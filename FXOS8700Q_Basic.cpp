@@ -99,7 +99,7 @@ void FXOS8700QBasic::changeODR(int odr)
 
 void FXOS8700QBasic::changeAccelOSR(int osr)
 {
-    if( (osr>= 0) && (osr <= 7) {
+    if( (osr>= 0) && (osr <= 4) {
 
         if (readPowerMode() != STANDBY)
         {
@@ -123,6 +123,26 @@ void FXOS8700QBasic::changeAccelOSR(int osr)
 }
 
 void FXOS8700QBasic::changeMagOSR(int osr){
+
+    if( (osr>= 0) && (osr <= 7) {
+
+        if (readPowerMode() != STANDBY)
+        {
+            changePowerMode(STANDBY);
+            waitTill(STANDBY);
+        }
+    
+        writeBitsToReg(M_CTRL_REG1,MAGNETO_OSR_BITS,osr<<2);
+
+        //Entering Active Mode
+        changePowerMode(ACTIVE);
+        waitTill(ACTIVE);
+
+    }
+    else{
+
+        Serial.println("Invalid osr selection");
+    }
 
     
 }
