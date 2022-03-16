@@ -5,11 +5,13 @@
 
 
 //Constructor
-FXOS8700QBasic::FXOS8700QBasic(byte address, float g,int port_no = 0)
+FXOS8700QBasic::FXOS8700QBasic(byte address = 0x21,int port_no = 0,float g = 9.8, float frequency = 400000)
 {
-    setupDevice(address,port_no);
+    setupDevice(address,port_no,frequency);
     this->g = g;
     checkConnection();
+    changePowerMode(STANDBY);
+    waitTill(STANDBY);
     changeOperatingMode(HYBRID_MODE);
     enableOrDisableLowNoise(LOW_NOISE_MODE_EN);
     changeAccelRange(4);
@@ -95,6 +97,35 @@ void FXOS8700QBasic::changeODR(int odr)
     waitTill(ACTIVE);
 }
 
+void FXOS8700QBasic::changeAccelOSR(int osr)
+{
+    if( (osr>= 0) && (osr <= 7) {
+
+        if (readPowerMode() != STANDBY)
+        {
+            changePowerMode(STANDBY);
+            waitTill(STANDBY);
+        }
+    
+        writeBitsToReg(CTRL_REG2,ACCEL_OSR_BITS,osr);
+
+        //Entering Active Mode
+        changePowerMode(ACTIVE);
+        waitTill(ACTIVE);
+
+    }
+    else{
+
+        Serial.println("Invalid osr selection");
+    }
+    
+
+}
+
+void FXOS8700QBasic::changeMagOSR(int osr){
+
+    
+}
 //hanges Accelerometer range
 void FXOS8700QBasic::changeAccelRange(int fsr)
 {

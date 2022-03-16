@@ -13,10 +13,12 @@ protected:
 public:
    //Constructor Functions
    FXOS8700QBasic() =default;
-   FXOS8700QBasic(byte address,int port_no, float g);
+   FXOS8700QBasic(byte address = 0x1F,int port_no = 0, float g = 9.8, float frequency = 400000);
    
    //Functions to change output parameters
    void changeODR(int odr);
+   void changeAccelOSR(int osr);
+   void changeMagOSR(int osr);
    void changeAccelRange(int fsr);
    void enableOrDisableLowNoise(byte low_noise_en);
     
