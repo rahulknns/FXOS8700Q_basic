@@ -2,6 +2,7 @@
 #include "FXOS8700Q_Registers.h"
 #include "I2C_device.h"
 #include "Arduino.h"
+#include "EEPROM.h"
 
 
 //Constructor
@@ -200,7 +201,19 @@ void FXOS8700QBasic::enableOrDisableLowNoise(bool low_noise_en)
     waitTill(ACTIVE);
 }
 
+void FXOS8700QBasic::loadCalibrationData(byte eep_address)
+{
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < ; i++)
+        {
+            hard_calib_matrix_[i][j] = EEPROM.read(eep_address + 3*i + j);
+        }
+        
+    }
+    
 
+}
 
 
 void FXOS8700QBasic::updateAccelMagData(float* accel_data,float* mag_data)
@@ -211,14 +224,11 @@ void FXOS8700QBasic::updateAccelMagData(float* accel_data,float* mag_data)
     for (int  i = 0; i < 3; i++)
     {
         accel_data[i]  = sensordata[i];
-        accel_data[i] -= accel_calib_offset[i];
     }
 
     for (int i = 0; i < 3; i++)
     {
-        mag_data[i]  = sensordata[3]*hard_calib_matrix_[0][i] + sensordata[4]*hard_calib_matrix_[1][i] + sensordata[5]*hard_calib_matrix_[2][i];
-        mag_data[i] -= soft_calib_offset_[i];
-        
+        mag_data[i]  = sensordata[3]*hard_calib_matrix_[0][i] + sensordata[4]*hard_calib_matrix_[1][i] + sensordata[5]*hard_calib_matrix_[2][i];        
     }
     
 }

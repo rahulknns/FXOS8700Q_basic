@@ -9,7 +9,6 @@ protected:
    float g_ = 9.8;
    float accel_sensitivity_ = 0.0023, magneto_sensitivity_ = 0.1;
    float hard_calib_matrix_[3][3];
-   float accel_calib_offset[3],soft_calib_offset_[3];
    
 
 public:
@@ -23,12 +22,12 @@ public:
    void changeMagOSR(unsigned int osr);
    void changeAccelRange(unsigned int fsr);
    void enableOrDisableLowNoise(byte low_noise_en);
-    
-   void calibrateMag();
-   void calibrateAccel();
+   void loadCalibrationData(byte eep_address);
+
 
    //functions to get output
    void updateAccelMagData(float* accel_data, float* mag_data);
+   
 
 protected:
    //Functions called internally before changing output parameters
