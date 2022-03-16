@@ -6,38 +6,36 @@
 class FXOS8700QBasic: public I2CDevice
 {
 protected:
-   float accel_sensitivity = 0.0023, magneto_sensitivity = 0.1,g;
-   
+   float g_ = 9.8;
+   float accel_sensitivity_ = 0.0023, magneto_sensitivity_ = 0.1;
+   float hard_calib_matrix_[3][3];
+   float accel_calib_offset[3],soft_calib_offset_[3];
    
 
 public:
    //Constructor Functions
    FXOS8700QBasic() =default;
-   FXOS8700QBasic(byte address = 0x1F,int port_no = 0, float g = 9.8, float frequency = 400000);
+   FXOS8700QBasic(float g = 9.8, byte address = 0x1F,int port_no = 0, unsigned int frequency = 400000);
    
    //Functions to change output parameters
-   void changeODR(int odr);
-   void changeAccelOSR(int osr);
-   void changeMagOSR(int osr);
-   void changeAccelRange(int fsr);
+   void changeODR(unsigned int odr);
+   void changeAccelOSR( unsigned int osr);
+   void changeMagOSR(unsigned int osr);
+   void changeAccelRange(unsigned int fsr);
    void enableOrDisableLowNoise(byte low_noise_en);
     
    void calibrateMag();
    void calibrateAccel();
 
    //functions to get output
-   float getAccelX();
-   float getAccelY();
-   float getAccelZ();
-   float getMagnetoX();
-   float getMagnetoY();
-   float getMagnetoZ();
+   void updateAccelMagData(float* accel_data, float* mag_data);
+
 protected:
    //Functions called internally before changing output parameters
-   void changePowerMode(byte mode);
-   void waitTill(byte mode);
+   void changePowerMode(bool mode);
+   void waitTill(bool mode);
    void changeOperatingMode(byte mode);
-   byte readPowerMode();
+   bool readPowerMode();
 };
 #endif
 
