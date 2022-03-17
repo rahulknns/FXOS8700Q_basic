@@ -3,6 +3,7 @@
 #include "I2C_device.h"
 #include "Arduino.h"
 #include "EEPROM.h"
+#include <stdlib.h>
 
 
 //Constructor
@@ -236,16 +237,36 @@ void FXOS8700QBasic::enableOrDisableAutoInc(bool enable,bool activate_sensor = 1
         }
     }
 }
+
+
+
+
 void FXOS8700QBasic::loadCalibrationData(byte eep_address)
 {
+    byte temp[4*3*3];
+    for (int i = 0; i < 4*3; i++)
+    {
+        temp[i] = EEPROM.read(eep_address + i);
+    }
+    memcpy(accel_offset_,temp,4*3);
+
+    for (int i = 0; i < 4*3; i++)
+    {
+        temp[i] = EEPROM.read(eep_address + 12 + i);
+    }
+    memcpy(mag_offset_,temp,4*3);
+
+    for (int i = 0; i < 4*3*3; i++)
+    {
+        temp[i] = EEPROM.read(eep_address + 24 +  i);
+    }
     for (int i = 0; i < 3; i++)
     {
-        for (int j = 0; j < 3; i++)
-        {
-            hard_calib_matrix_[i][j] = EEPROM.read(eep_address + 3*i + j);
-        }
-        
+         memcpy(mag_offset_[i],temp + (4*3*i),4*3);
     }
+    
+   
+    
     
 
 }
