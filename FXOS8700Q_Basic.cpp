@@ -6,14 +6,15 @@
 
 
 //Constructor
-FXOS8700QBasic::FXOS8700QBasic(float g = 9.8,byte address = 0x21,unsigned int port_no = 0, unsigned int frequency = 400000)
+FXOS8700QBasic::FXOS8700QBasic(float g ,byte address ,unsigned int port_no = 0, unsigned int frequency = 400000)
 {
     g_ = g;
     setupDevice(address,port_no,frequency);
     
     checkConnection();
     changeOperatingMode(HYBRID_MODE);
-    enableOrDisableLowNoise(LOW_NOISE_MODE_EN);
+    enableOrDisableLowNoise(ENABLE);
+    enableOrDisableAutoInc(ENABLE);
     changeAccelRange(4);
 }
 
@@ -53,7 +54,7 @@ bool FXOS8700QBasic::readPowerMode()
 
 
 //Change the device output data rate
-void FXOS8700QBasic::changeODR(unsigned int odr)
+void FXOS8700QBasic::changeODR(unsigned int odr,bool activate_sensor = 1)
 {
 
      if (readPowerMode() != STANDBY)
@@ -93,16 +94,21 @@ void FXOS8700QBasic::changeODR(unsigned int odr)
         Serial.println("Invalid odr!");
         break;
     }
-
-    //Entering Active Mode
-    changePowerMode(ACTIVE);
+ 
+    if (activate_sensor)
+    {
+        //Entering Active Mode
+        changePowerMode(ACTIVE);
+        
+        waitTill(ACTIVE);
+    }
     
-    waitTill(ACTIVE);
+    
 }
 
-void FXOS8700QBasic::changeAccelOSR(unsigned int osr)
+void FXOS8700QBasic::changeAccelOSR(unsigned int osr,bool activate_sensor = 1)
 {
-    if( (osr>= 0) && (osr <= 4) {
+    if( (osr>= 0) && (osr <= 4)) {
 
         if (readPowerMode() != STANDBY)
         {
@@ -112,10 +118,13 @@ void FXOS8700QBasic::changeAccelOSR(unsigned int osr)
     
         writeBitsToReg(CTRL_REG2,ACCEL_OSR_BITS,osr);
 
-        //Entering Active Mode
-        changePowerMode(ACTIVE);
-        waitTill(ACTIVE);
-
+        if (activate_sensor)
+        {
+            //Entering Active Mode
+            changePowerMode(ACTIVE);
+            
+            waitTill(ACTIVE);
+        }
     }
     else{
 
@@ -125,9 +134,9 @@ void FXOS8700QBasic::changeAccelOSR(unsigned int osr)
 
 }
 
-void FXOS8700QBasic::changeMagOSR(unsigned int osr){
+void FXOS8700QBasic::changeMagOSR(unsigned int osr,bool activate_sensor = 1){
 
-    if( (osr>= 0) && (osr <= 7) {
+    if( (osr>= 0) && (osr <= 7)) {
 
         if (readPowerMode() != STANDBY)
         {
@@ -137,9 +146,13 @@ void FXOS8700QBasic::changeMagOSR(unsigned int osr){
     
         writeBitsToReg(M_CTRL_REG1,MAGNETO_OSR_BITS,osr<<2);
 
-        //Entering Active Mode
-        changePowerMode(ACTIVE);
-        waitTill(ACTIVE);
+        if (activate_sensor)
+        {
+            //Entering Active Mode
+            changePowerMode(ACTIVE);
+            
+            waitTill(ACTIVE);
+        }
 
     }
     else{
@@ -150,7 +163,7 @@ void FXOS8700QBasic::changeMagOSR(unsigned int osr){
     
 }
 //hanges Accelerometer range
-void FXOS8700QBasic::changeAccelRange( unsigned int fsr)
+void FXOS8700QBasic::changeAccelRange( unsigned int fsr,bool activate_sensor = 1)
 {
      if (readPowerMode() != STANDBY)
     {
@@ -162,16 +175,16 @@ void FXOS8700QBasic::changeAccelRange( unsigned int fsr)
     {
     case 2:
         writeBitsToReg(XYZ_DATA_CONFIG_REG,FSR_BITS,0);
-        accel_sensitivity = (0.244)*(0.001)*g;
+        accel_sensitivity_ = (0.244)*(0.001)*g_;
         break;
     case 4:
         writeBitsToReg(XYZ_DATA_CONFIG_REG,FSR_BITS,1);
-        accel_sensitivity = (0.244)*2*(0.001)*g;
+        accel_sensitivity_ = (0.244)*2*(0.001)*g_;
         break;
     case 8:
         
         writeBitsToReg(XYZ_DATA_CONFIG_REG,FSR_BITS,2);
-        accel_sensitivity = (0.244)*4*(0.001)*g;
+        accel_sensitivity_ = (0.244)*4*(0.001)*g_;
         break;
     
     default:
@@ -181,12 +194,16 @@ void FXOS8700QBasic::changeAccelRange( unsigned int fsr)
    
     }
 
-     //Entering Active Mode
-    changePowerMode(ACTIVE);
-    waitTill(ACTIVE);
+        if (activate_sensor)
+        {
+            //Entering Active Mode
+            changePowerMode(ACTIVE);
+            
+            waitTill(ACTIVE);
+        }
 
 }
-void FXOS8700QBasic::enableOrDisableLowNoise(bool low_noise_en)
+void FXOS8700QBasic::enableOrDisableLowNoise(bool low_noise_en,bool activate_sensor = 1)
 {
     if (readPowerMode() != STANDBY)
     {
@@ -196,16 +213,34 @@ void FXOS8700QBasic::enableOrDisableLowNoise(bool low_noise_en)
 
     writeBitsToReg(CTRL_REG1,NOISE_MODE_BITS,( (byte) low_noise_en) << 2);
 
-    //Entering Active Mode
-    changePowerMode(ACTIVE);
-    waitTill(ACTIVE);
+     if (activate_sensor)
+       {
+            //Entering Active Mode
+            changePowerMode(ACTIVE);
+                
+             waitTill(ACTIVE);
+       }
 }
-
+void FXOS8700QBasic::enableOrDisableAutoInc(bool enable,bool activate_sensor = 1){
+    if (readPowerMode() != STANDBY)
+    {
+        changePowerMode(STANDBY);
+        waitTill(STANDBY);
+        writeBitsToReg(M_CTRL_REG2,HYBAUTOINC_MODE_BITS, ((byte) enable)<<5);
+        if (activate_sensor)
+        {
+            //Entering Active Mode
+            changePowerMode(ACTIVE);
+            
+            waitTill(ACTIVE);
+        }
+    }
+}
 void FXOS8700QBasic::loadCalibrationData(byte eep_address)
 {
     for (int i = 0; i < 3; i++)
     {
-        for (int j = 0; j < ; i++)
+        for (int j = 0; j < 3; i++)
         {
             hard_calib_matrix_[i][j] = EEPROM.read(eep_address + 3*i + j);
         }
@@ -218,17 +253,19 @@ void FXOS8700QBasic::loadCalibrationData(byte eep_address)
 
 void FXOS8700QBasic::updateAccelMagData(float* accel_data,float* mag_data)
 {
-    float sensor_data[6];
-    readShortIntsFromReg(OUT_X_MSB_REG,6,sensor_data);
+    short int sensor_data[6] ;
+    readShortIntsFromReg(OUT_X_MSB_REG,3,sensor_data);
+    readShortIntsFromReg(M_OUT_X_MSB_REG,3,sensor_data + 3);
 
     for (int  i = 0; i < 3; i++)
     {
-        accel_data[i]  = sensordata[i];
+        accel_data[i]  = ((sensor_data[i] >>2) * accel_sensitivity_);
+  
     }
 
     for (int i = 0; i < 3; i++)
     {
-        mag_data[i]  = sensordata[3]*hard_calib_matrix_[0][i] + sensordata[4]*hard_calib_matrix_[1][i] + sensordata[5]*hard_calib_matrix_[2][i];        
+        mag_data[i]  = (( sensor_data[3] * hard_calib_matrix_[0][i] + sensor_data[4] * hard_calib_matrix_[1][i] + sensor_data[5] * hard_calib_matrix_[2][i])*magneto_sensitivity_);        
     }
     
 }
