@@ -281,12 +281,14 @@ void FXOS8700QBasic::updateAccelMagData(float* accel_data,float* mag_data)
     for (int  i = 0; i < 3; i++)
     {
         accel_data[i]  = ((sensor_data[i] >>2) * accel_sensitivity_);
+        accel_data[i] -= accel_offset_[i];
   
     }
 
     for (int i = 0; i < 3; i++)
     {
-        mag_data[i]  = (( sensor_data[3] * hard_calib_matrix_[0][i] + sensor_data[4] * hard_calib_matrix_[1][i] + sensor_data[5] * hard_calib_matrix_[2][i])*magneto_sensitivity_);        
+        mag_data[i]  = (( sensor_data[3] * hard_calib_matrix_[0][i] + sensor_data[4] * hard_calib_matrix_[1][i] + sensor_data[5] * hard_calib_matrix_[2][i])*magneto_sensitivity_); 
+        mag_data[i] -= mag_offset_[i];    
     }
     
 }
