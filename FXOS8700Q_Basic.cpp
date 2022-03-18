@@ -262,7 +262,7 @@ void FXOS8700QBasic::loadCalibrationData(byte eep_address)
     }
     for (int i = 0; i < 3; i++)
     {
-         memcpy(mag_offset_[i],temp + (4*3*i),4*3);
+         memcpy(hard_calib_matrix_[i],temp + (4*3*i),4*3);
     }
     
    

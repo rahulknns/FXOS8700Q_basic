@@ -8,7 +8,7 @@ class FXOS8700QBasic: public I2CDevice
 protected:
    float g_ = 9.8;
    float accel_sensitivity_ = 0.0023, magneto_sensitivity_ = 0.1;
-   float mag_offset_[3] = {0,0,0},;
+   float mag_offset_[3] = {0,0,0};
    float accel_offset_[3] = {0,0,0};
    float hard_calib_matrix_[3][3] = {{1,0,0},{0,1,0},{0,0,1}};
    
