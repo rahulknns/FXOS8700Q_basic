@@ -8,15 +8,15 @@ class FXOS8700QBasic: public I2CDevice
 protected:
    float g_ = 9.8;
    float accel_sensitivity_ = 0.0023, magneto_sensitivity_ = 0.1;
-   float mag_offset_[3] = {0,0,0};
-   float accel_offset_[3] = {0,0,0};
-   float hard_calib_matrix_[3][3] = {{1,0,0},{0,1,0},{0,0,1}};
+   float mag_offset_[3] = {57.00,76.10,-36.55};
+   float accel_offset_[3] = {0.09,-0.38,0.53};
+   float hard_calib_matrix_[3][3] = {{0.978,-0.022,0.020},{0.022,1.022,0.009},{0.02,0.009,1.021}};
    
 
 public:
    //Constructor Functions
    FXOS8700QBasic() =default;
-   FXOS8700QBasic(float g , byte address,unsigned int port_no = 0, unsigned int frequency = 400000);
+   FXOS8700QBasic(float g , byte address,unsigned int port_no = 0);
    
    //Functions to change output parameters
    void changeODR(unsigned int odr,bool activate_sensor = 1);

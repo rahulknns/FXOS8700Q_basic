@@ -7,10 +7,10 @@
 
 
 //Constructor
-FXOS8700QBasic::FXOS8700QBasic(float g ,byte address ,unsigned int port_no = 0, unsigned int frequency = 400000)
+FXOS8700QBasic::FXOS8700QBasic(float g ,byte address ,unsigned int port_no = 0)
 {
     g_ = g;
-    setupDevice(address,port_no,frequency);
+    setupDevice(address,port_no);
     
     checkConnection();
     changeOperatingMode(HYBRID_MODE);
@@ -285,10 +285,14 @@ void FXOS8700QBasic::updateAccelMagData(float* accel_data,float* mag_data)
   
     }
 
+
+    
+    
     for (int i = 0; i < 3; i++)
     {
-        mag_data[i]  = (( sensor_data[3] * hard_calib_matrix_[0][i] + sensor_data[4] * hard_calib_matrix_[1][i] + sensor_data[5] * hard_calib_matrix_[2][i])*magneto_sensitivity_); 
-        mag_data[i] -= mag_offset_[i];    
+       
+        mag_data[i]  = ((sensor_data[3 + i]*magneto_sensitivity_) - mag_offset_[i]); 
+        
     }
     
 }
