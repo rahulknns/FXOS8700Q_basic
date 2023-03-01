@@ -13,12 +13,10 @@ protected:
 public:
    //Constructor Functions
    FXOS8700QBasic() =default;
-   FXOS8700QBasic(float g , byte address,unsigned int port_no = 0);
+   FXOS8700QBasic(float g = 9.8 , byte address,unsigned int port_no = 0);
    
    //Functions to change output parameters
    void changeODR(unsigned int odr,bool activate_sensor = 1);
-   void changeAccelOSR( unsigned int osr,bool activate_sensor = 1);
-   void changeMagOSR(unsigned int osr,bool activate_sensor = 1);
    void changeAccelRange(unsigned int fsr,bool activate_sensor = 1);
 
 
