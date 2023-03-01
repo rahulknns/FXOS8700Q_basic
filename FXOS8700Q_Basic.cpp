@@ -12,8 +12,8 @@ FXOS8700QBasic::FXOS8700QBasic(float g ,byte address ,TwoWire* preferred_wire = 
     
     checkConnection();
     changeOperatingMode(HYBRID_MODE);
-    changeODR();
-    changeAccelRange(4);
+    changeODR(DEFAULT_ODR);
+    changeAccelRange(DEFAULT_OSR);
 }
 
 
