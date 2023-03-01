@@ -5,13 +5,14 @@
 
 
 //Constructor
-FXOS8700QBasic::FXOS8700QBasic(float g ,byte address ,unsigned int port_no = 0)
+FXOS8700QBasic::FXOS8700QBasic(float g ,byte address ,TwoWire* preferred_wire = &Wire)
 {
     g_ = g;
-    setupDevice(address,port_no);
+    setupDevice(address,preferred_wire);
     
     checkConnection();
     changeOperatingMode(HYBRID_MODE);
+    changeODR();
     changeAccelRange(4);
 }
 
