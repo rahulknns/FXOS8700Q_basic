@@ -5,6 +5,7 @@
 
 #define DEFAULT_ODR 100
 #define DEFAULT_FSR 4
+#define DEFAULT_ADDRESS 0x21 
 class FXOS8700QBasic: public I2CDevice
 {
 protected:
@@ -15,7 +16,7 @@ protected:
 public:
    //Constructor Functions
    FXOS8700QBasic() =default;
-   FXOS8700QBasic(float g = 9.8 , byte address,TwoWire* preferred_wire);
+   FXOS8700QBasic(float g = 9.8 , byte address = DEFAULT_ADDRESS,TwoWire* preferred_wire);
    
    //Functions to change output parameters
    void changeODR(unsigned int odr,bool activate_sensor = 1);
