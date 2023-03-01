@@ -103,62 +103,7 @@ void FXOS8700QBasic::changeODR(unsigned int odr,bool activate_sensor = 1)
     
 }
 
-void FXOS8700QBasic::changeAccelOSR(unsigned int osr,bool activate_sensor = 1)
-{
-    if( (osr>= 0) && (osr <= 4)) {
 
-        if (readPowerMode() != STANDBY)
-        {
-            changePowerMode(STANDBY);
-            waitTill(STANDBY);
-        }
-    
-        writeBitsToReg(CTRL_REG2,ACCEL_OSR_BITS,osr);
-
-        if (activate_sensor)
-        {
-            //Entering Active Mode
-            changePowerMode(ACTIVE);
-            
-            waitTill(ACTIVE);
-        }
-    }
-    else{
-
-        Serial.println("Invalid osr selection");
-    }
-    
-
-}
-
-void FXOS8700QBasic::changeMagOSR(unsigned int osr,bool activate_sensor = 1){
-
-    if( (osr>= 0) && (osr <= 7)) {
-
-        if (readPowerMode() != STANDBY)
-        {
-            changePowerMode(STANDBY);
-            waitTill(STANDBY);
-        }
-    
-        writeBitsToReg(M_CTRL_REG1,MAGNETO_OSR_BITS,osr<<2);
-
-        if (activate_sensor)
-        {
-            //Entering Active Mode
-            changePowerMode(ACTIVE);
-            
-            waitTill(ACTIVE);
-        }
-
-    }
-    else{
-
-        Serial.println("Invalid osr selection");
-    }
-
-    
-}
 //hanges Accelerometer range
 void FXOS8700QBasic::changeAccelRange( unsigned int fsr,bool activate_sensor = 1)
 {
