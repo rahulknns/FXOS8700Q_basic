@@ -2,8 +2,6 @@
 #include "FXOS8700Q_Registers.h"
 #include "I2C_device.h"
 #include "Arduino.h"
-#include "EEPROM.h"
-#include <stdlib.h>
 
 
 //Constructor
@@ -14,8 +12,6 @@ FXOS8700QBasic::FXOS8700QBasic(float g ,byte address ,unsigned int port_no = 0)
     
     checkConnection();
     changeOperatingMode(HYBRID_MODE);
-    enableOrDisableLowNoise(ENABLE);
-    enableOrDisableAutoInc(ENABLE);
     changeAccelRange(4);
 }
 
@@ -204,72 +200,8 @@ void FXOS8700QBasic::changeAccelRange( unsigned int fsr,bool activate_sensor = 1
         }
 
 }
-void FXOS8700QBasic::enableOrDisableLowNoise(bool low_noise_en,bool activate_sensor = 1)
-{
-    if (readPowerMode() != STANDBY)
-    {
-        changePowerMode(STANDBY);
-        waitTill(STANDBY);
-    }
-
-    writeBitsToReg(CTRL_REG1,NOISE_MODE_BITS,( (byte) low_noise_en) << 2);
-
-     if (activate_sensor)
-       {
-            //Entering Active Mode
-            changePowerMode(ACTIVE);
-                
-             waitTill(ACTIVE);
-       }
-}
-void FXOS8700QBasic::enableOrDisableAutoInc(bool enable,bool activate_sensor = 1){
-    if (readPowerMode() != STANDBY)
-    {
-        changePowerMode(STANDBY);
-        waitTill(STANDBY);
-        writeBitsToReg(M_CTRL_REG2,HYBAUTOINC_MODE_BITS, ((byte) enable)<<5);
-        if (activate_sensor)
-        {
-            //Entering Active Mode
-            changePowerMode(ACTIVE);
-            
-            waitTill(ACTIVE);
-        }
-    }
-}
 
 
-
-
-void FXOS8700QBasic::loadCalibrationData(byte eep_address)
-{
-    byte temp[4*3*3];
-    for (int i = 0; i < 4*3; i++)
-    {
-        temp[i] = EEPROM.read(eep_address + i);
-    }
-    memcpy(accel_offset_,temp,4*3);
-
-    for (int i = 0; i < 4*3; i++)
-    {
-        temp[i] = EEPROM.read(eep_address + 12 + i);
-    }
-    memcpy(mag_offset_,temp,4*3);
-
-    for (int i = 0; i < 4*3*3; i++)
-    {
-        temp[i] = EEPROM.read(eep_address + 24 +  i);
-    }
-    for (int i = 0; i < 3; i++)
-    {
-         memcpy(hard_calib_matrix_[i],temp + (4*3*i),4*3);
-    }
-    
-   
-    
-    
-
-}
 
 
 void FXOS8700QBasic::updateAccelMagData(float* accel_data,float* mag_data)
@@ -281,7 +213,6 @@ void FXOS8700QBasic::updateAccelMagData(float* accel_data,float* mag_data)
     for (int  i = 0; i < 3; i++)
     {
         accel_data[i]  = ((sensor_data[i] >>2) * accel_sensitivity_);
-        accel_data[i] -= accel_offset_[i];
   
     }
 
@@ -291,7 +222,7 @@ void FXOS8700QBasic::updateAccelMagData(float* accel_data,float* mag_data)
     for (int i = 0; i < 3; i++)
     {
        
-        mag_data[i]  = ((sensor_data[3 + i]*magneto_sensitivity_) - mag_offset_[i]); 
+        mag_data[i]  = (sensor_data[3 + i]*magneto_sensitivity_); 
         
     }
     
