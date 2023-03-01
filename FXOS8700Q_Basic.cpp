@@ -5,7 +5,7 @@
 
 
 //Constructor
-FXOS8700QBasic::FXOS8700QBasic(float g ,byte address ,TwoWire* preferred_wire = &Wire)
+FXOS8700QBasic::FXOS8700QBasic(float g = 9.8,byte address = DEFAULT_ADDRESS ,TwoWire* preferred_wire = &Wire)
 {
     g_ = g;
     setupDevice(address,preferred_wire);
